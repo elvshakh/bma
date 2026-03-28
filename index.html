@@ -1181,104 +1181,6 @@ document.getElementById('exportBtn').addEventListener('click',()=>{
 document.getElementById('printBtn')?.addEventListener('click',()=>window.print());
 
 
-// ===================== SAVE TO GOOGLE SHEETS =====================
-let scriptUrlMemory = 'https://script.google.com/macros/s/AKfycbz4o6g4BjiEynyUDUJFV5mtF4xKtfm06f4QAQrKYWk4QqFcjhhRyxEqExA1-99Rjsootw/exec';
-
-document.addEventListener('DOMContentLoaded', function() {
-
-document.getElementById('saveBtn')?.addEventListener('click',()=>{
-  document.getElementById('saveModal').classList.add('open');
-  if(scriptUrlMemory) document.getElementById('scriptUrl').value = scriptUrlMemory;
-  const cn = document.getElementById('companyName')?.value;
-  if(cn && !document.getElementById('saveName').value) document.getElementById('saveName').value = cn;
-  lucide.createIcons();
-});
-
-document.getElementById('showScriptInput')?.addEventListener('click',(e)=>{
-  e.preventDefault();
-  const wrap = document.getElementById('scriptInputWrap');
-  wrap.style.display = wrap.style.display==='none' ? 'block' : 'none';
-});
-document.getElementById('scriptUrlAdmin')?.addEventListener('input',(e)=>{
-  scriptUrlMemory = e.target.value.trim();
-  document.getElementById('scriptUrl').value = scriptUrlMemory;
-});
-
-function closeSaveModal(){
-  document.getElementById('saveModal').classList.remove('open');
-}
-document.getElementById('saveModalClose')?.addEventListener('click', closeSaveModal);
-document.getElementById('saveModalCancelBtn')?.addEventListener('click', closeSaveModal);
-document.getElementById('saveModal')?.addEventListener('click',(e)=>{
-  if(e.target===e.currentTarget) closeSaveModal();
-});
-
-document.getElementById('saveConfirmBtn')?.addEventListener('click', async ()=>{
-  const name = document.getElementById('saveName').value.trim();
-  const email = document.getElementById('saveEmail').value.trim();
-  if(!name){ showSaveStatus('error','Пожалуйста, укажите ваше имя'); return; }
-  if(!email || !email.includes('@')){ showSaveStatus('error','Пожалуйста, укажите корректный email'); return; }
-  const url = document.getElementById('scriptUrl').value.trim() || scriptUrlMemory;
-  if(!url || !url.startsWith('https://script.google.com')){
-    showSaveStatus('error','Приложение ещё не подключено к базе данных. Обратитесь к владельцу инструмента.');
-    return;
-  }
-  scriptUrlMemory = url;
-
-  const s = getScores();
-  const avg = ((s.product+s.market+s.team+s.finance+s.ops+s.scale)/6).toFixed(1);
-  const payload = {
-    timestamp: new Date().toLocaleString('ru-RU'),
-    name: document.getElementById('saveName')?.value || '',
-    email: document.getElementById('saveEmail')?.value || '',
-    phone: document.getElementById('savePhone')?.value || '',
-    company: document.getElementById('companyName')?.value || '',
-    industry: document.getElementById('industry')?.value || '',
-    score_avg: avg,
-    score_product: s.product,
-    score_market: s.market,
-    score_team: s.team,
-    score_finance: s.finance,
-    score_ops: s.ops,
-    score_scale: s.scale,
-    vp: document.getElementById('c_vp')?.value || '',
-    cs: document.getElementById('c_cs')?.value || '',
-    rs: document.getElementById('c_rs')?.value || '',
-    co: document.getElementById('c_co')?.value || '',
-    strengths: document.getElementById('s_strengths')?.value || '',
-    weaknesses: document.getElementById('s_weaknesses')?.value || '',
-    opportunities: document.getElementById('s_opportunities')?.value || '',
-    threats: document.getElementById('s_threats')?.value || '',
-    revenue: document.getElementById('kpi_revenue')?.textContent || '',
-    margin: document.getElementById('kpi_margin')?.textContent || '',
-    ebitda: document.getElementById('kpi_ebitda')?.textContent || '',
-  };
-
-  showSaveStatus('loading','Отправляю данные...');
-  document.getElementById('saveConfirmBtn').disabled = true;
-
-  try {
-    const resp = await fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-    showSaveStatus('success','✅ Отлично! Эльвира свяжется с вами в течение 1 рабочего дня.');
-    setTimeout(()=>closeSaveModal(), 2200);
-  } catch(err) {
-    showSaveStatus('error','Ошибка отправки. Проверьте URL и настройки доступа Apps Script.');
-  } finally {
-    document.getElementById('saveConfirmBtn').disabled = false;
-  }
-});
-
-function showSaveStatus(type, msg){
-  const el = document.getElementById('saveStatus');
-  el.className = 'save-status ' + type;
-  el.textContent = msg;
-}
-}); // end DOMContentLoaded
 
 
 // ===================== INIT =====================
@@ -1343,6 +1245,99 @@ document.addEventListener('DOMContentLoaded',init);
 
   </div>
 </div>
+
+
+<script>
+// Save modal — инициализация после загрузки DOM
+(function() {
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz4o6g4BjiEynyUDUJFV5mtF4xKtfm06f4QAQrKYWk4QqFcjhhRyxEqExA1-99Rjsootw/exec';
+
+  function openModal() {
+    var modal = document.getElementById('saveModal');
+    if (!modal) { console.error('saveModal not found'); return; }
+    modal.classList.add('open');
+    var cn = document.getElementById('companyName');
+    var sn = document.getElementById('saveName');
+    if (cn && sn && !sn.value) sn.value = cn.value;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function closeModal() {
+    var modal = document.getElementById('saveModal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  function showStatus(type, msg) {
+    var el = document.getElementById('saveStatus');
+    if (!el) return;
+    el.className = 'save-status ' + type;
+    el.textContent = msg;
+  }
+
+  async function submitForm() {
+    var name = (document.getElementById('saveName') || {}).value || '';
+    var email = (document.getElementById('saveEmail') || {}).value || '';
+    var phone = (document.getElementById('savePhone') || {}).value || '';
+    name = name.trim(); email = email.trim();
+
+    if (!name) { showStatus('error', 'Пожалуйста, укажите ваше имя'); return; }
+    if (!email || !email.includes('@')) { showStatus('error', 'Пожалуйста, укажите корректный email'); return; }
+
+    var btn = document.getElementById('saveConfirmBtn');
+    if (btn) btn.disabled = true;
+    showStatus('loading', 'Отправляю данные...');
+
+    function getVal(id) { var el = document.getElementById(id); return el ? el.value || el.textContent || '' : ''; }
+    function getScore(id) { var el = document.getElementById(id); return el ? (el.value || '') : ''; }
+
+    var payload = {
+      timestamp: new Date().toLocaleString('ru-RU'),
+      name: name, email: email, phone: phone,
+      company: getVal('companyName'),
+      industry: getVal('industry'),
+      vp: getVal('c_vp'), cs: getVal('c_cs'), rs: getVal('c_rs'), co: getVal('c_co'),
+      strengths: getVal('s_strengths'), weaknesses: getVal('s_weaknesses'),
+      opportunities: getVal('s_opportunities'), threats: getVal('s_threats'),
+      revenue: getVal('kpi_revenue'), margin: getVal('kpi_margin'), ebitda: getVal('kpi_ebitda'),
+      score_product: getScore('score_product'), score_market: getScore('score_market'),
+      score_team: getScore('score_team'), score_finance: getScore('score_finance'),
+      score_ops: getScore('score_ops'), score_scale: getScore('score_scale')
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showStatus('success', '✅ Отлично! Эльвира свяжется с вами в течение 1 рабочего дня.');
+      setTimeout(closeModal, 2500);
+    } catch(err) {
+      showStatus('error', 'Ошибка отправки. Попробуйте ещё раз.');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var openBtn = document.getElementById('saveBtn');
+    var closeBtn = document.getElementById('saveModalClose');
+    var cancelBtn = document.getElementById('saveModalCancelBtn');
+    var confirmBtn = document.getElementById('saveConfirmBtn');
+    var overlay = document.getElementById('saveModal');
+
+    console.log('Save modal init:', {openBtn, closeBtn, cancelBtn, confirmBtn, overlay});
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (confirmBtn) confirmBtn.addEventListener('click', submitForm);
+    if (overlay) overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal();
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
