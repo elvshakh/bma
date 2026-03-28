@@ -1184,6 +1184,8 @@ document.getElementById('printBtn')?.addEventListener('click',()=>window.print()
 // ===================== SAVE TO GOOGLE SHEETS =====================
 let scriptUrlMemory = 'https://script.google.com/macros/s/AKfycbz4o6g4BjiEynyUDUJFV5mtF4xKtfm06f4QAQrKYWk4QqFcjhhRyxEqExA1-99Rjsootw/exec';
 
+document.addEventListener('DOMContentLoaded', function() {
+
 document.getElementById('saveBtn')?.addEventListener('click',()=>{
   document.getElementById('saveModal').classList.add('open');
   if(scriptUrlMemory) document.getElementById('scriptUrl').value = scriptUrlMemory;
@@ -1276,6 +1278,8 @@ function showSaveStatus(type, msg){
   el.className = 'save-status ' + type;
   el.textContent = msg;
 }
+}); // end DOMContentLoaded
+
 
 // ===================== INIT =====================
 function init(){
