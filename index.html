@@ -1292,68 +1292,51 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- SAVE TO SHEETS MODAL -->
 <div class="modal-overlay" id="saveModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal">
-    <div style="overflow-y:auto;flex:1;padding:var(--space-6) var(--space-8)">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="modalTitle">Получите разбор вашей бизнес-модели</div>
-        <div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1)">Бесплатно · В течение 1 рабочего дня</div>
+    <!-- Scroll area -->
+    <div style="overflow-y:auto;flex:1;padding:var(--space-5) var(--space-6)">
+
+      <div class="modal-header" style="margin-bottom:var(--space-4)">
+        <div>
+          <div class="modal-title" id="modalTitle">Получите разбор бизнес-модели</div>
+          <div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px">Бесплатно · 1 рабочий день</div>
+        </div>
+        <button class="modal-close" id="saveModalClose" aria-label="Закрыть"><i data-lucide="x"></i></button>
       </div>
-      <button class="modal-close" id="saveModalClose" aria-label="Закрыть"><i data-lucide="x"></i></button>
-    </div>
 
-    <div style="background:var(--color-primary-highlight);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-5);display:flex;gap:var(--space-4);align-items:flex-start">
-      <div style="font-size:1.6rem;flex-shrink:0">🎁</div>
-      <div>
-        <div style="font-weight:600;font-size:var(--text-sm);color:var(--color-primary);margin-bottom:var(--space-1)">Вы уже проделали большую работу</div>
-        <div style="font-size:var(--text-sm);color:var(--color-text);line-height:1.6">Оставьте контакты — Эльвира лично пришлёт вам письмо с <b>3 конкретными рекомендациями</b> по вашей бизнес-модели. Без продаж, без шаблонов — только по вашим данным.</div>
+      <div style="background:var(--color-primary-highlight);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);font-size:var(--text-sm);color:var(--color-text);line-height:1.5">
+        🎁 Эльвира лично пришлёт вам письмо с <b>3 конкретными рекомендациями</b> — только по вашим данным. Без продаж и шаблонов.
       </div>
-    </div>
 
-    <div style="display:flex;flex-direction:column;gap:var(--space-1);margin-bottom:var(--space-5)">
-      <div style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)"><i data-lucide="check-circle" style="width:15px;height:15px;color:var(--color-success);flex-shrink:0"></i> Анализ слабых мест именно вашей модели</div>
-      <div style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)"><i data-lucide="check-circle" style="width:15px;height:15px;color:var(--color-success);flex-shrink:0"></i> 3 приоритетных шага для роста</div>
-      <div style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)"><i data-lucide="check-circle" style="width:15px;height:15px;color:var(--color-success);flex-shrink:0"></i> Ответ в течение 1 рабочего дня</div>
-    </div>
+      <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbz4o6g4BjiEynyUDUJFV5mtF4xKtfm06f4QAQrKYWk4QqFcjhhRyxEqExA1-99Rjsootw/exec">
 
-    <!-- Hidden script URL — pre-filled by owner -->
-    <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbz4o6g4BjiEynyUDUJFV5mtF4xKtfm06f4QAQrKYWk4QqFcjhhRyxEqExA1-99Rjsootw/exec">
+      <div class="form-group">
+        <label class="form-label">Ваше имя <span style="color:var(--color-error)">*</span></label>
+        <input type="text" class="form-input" id="saveName" placeholder="Как к вам обращаться?">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email <span style="color:var(--color-error)">*</span></label>
+        <input type="email" class="form-input" id="saveEmail" placeholder="Куда прислать разбор?">
+      </div>
+      <div class="form-group" style="margin-bottom:var(--space-3)">
+        <label class="form-label">Телефон / Telegram</label>
+        <input type="tel" class="form-input" id="savePhone" placeholder="+7 xxx xxx-xx-xx или @username">
+      </div>
 
-    <div class="form-group">
-      <label class="form-label">Ваше имя <span style="color:var(--color-error)">*</span></label>
-      <input type="text" class="form-input" id="saveName" placeholder="Как к вам обращаться?">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email <span style="color:var(--color-error)">*</span></label>
-      <input type="email" class="form-input" id="saveEmail" placeholder="Куда прислать разбор?">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Телефон / Telegram</label>
-      <input type="tel" class="form-input" id="savePhone" placeholder="+7 xxx xxx-xx-xx или @username">
-    </div>
+      <div style="font-size:var(--text-xs);color:var(--color-text-faint)">
+        Нажимая кнопку, вы соглашаетесь на обработку персональных данных в соответствии с ФЗ-152.
+      </div>
 
-    <div style="font-size:var(--text-xs);color:var(--color-text-faint);margin-bottom:var(--space-4)">
-      Нажимая кнопку, вы соглашаетесь на обработку персональных данных в соответствии с ФЗ-152.
-    </div>
-
-    <div class="save-status" id="saveStatus"></div>
-
-    <!-- Owner-only config hint (hidden in production) -->
-    <div id="ownerHint" style="display:none;margin-top:var(--space-4);padding:var(--space-3);background:var(--color-surface-offset);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--color-text-muted)">
-      <b>Только для владельца:</b> <a href="#" id="showScriptInput" style="color:var(--color-primary)">Настроить подключение к таблице</a>
-    </div>
-    <div id="scriptInputWrap" style="display:none;margin-top:var(--space-3)">
-      <input type="url" class="form-input" id="scriptUrlAdmin" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:var(--text-xs)">
-      <div style="font-size:var(--text-xs);color:var(--color-text-muted);margin-top:var(--space-1)">Ссылка сохранится на время сессии</div>
-    </div>
     </div><!-- end scroll area -->
-    <!-- Sticky footer with CTA -->
-    <div style="padding:var(--space-4) var(--space-8);border-top:1px solid var(--color-border);background:var(--color-surface);flex-shrink:0">
-      <div class="save-status" id="saveStatus" style="margin-bottom:var(--space-3)"></div>
-      <div class="btn-group" style="margin-top:0">
-        <button class="btn btn-primary" id="saveConfirmBtn" style="flex:1;padding:var(--space-4) var(--space-5)"><i data-lucide="send"></i> Получить разбор бесплатно</button>
+
+    <!-- Sticky footer -->
+    <div style="padding:var(--space-4) var(--space-6);border-top:1px solid var(--color-border);background:var(--color-surface);flex-shrink:0">
+      <div id="saveStatus" class="save-status" style="margin-bottom:var(--space-3)"></div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="saveConfirmBtn" style="flex:1"><i data-lucide="send"></i> Получить разбор бесплатно</button>
         <button class="btn btn-ghost" id="saveModalCancelBtn">Отмена</button>
       </div>
     </div>
+
   </div>
 </div>
 
